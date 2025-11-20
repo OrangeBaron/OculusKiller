@@ -35,6 +35,8 @@ function Restore-Dash {
     }
 }
 
+Restore-Dash
+
 $folder = Split-Path $target
 $watcher = New-Object System.IO.FileSystemWatcher
 $watcher.Path = $folder
@@ -48,3 +50,4 @@ $watcher.EnableRaisingEvents = $true
 while ($true) {
     Start-Sleep -Seconds 60
 }
+
