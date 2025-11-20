@@ -1,7 +1,7 @@
 Add-Type -AssemblyName System.Windows.Forms
 
 $original = "C:\OculusKiller\OculusDash.exe"
-$target   = "C:\Program Files\Oculus\Support\oculus-core\OculusDash.exe"
+$target   = "C:\Program Files\Oculus\Support\oculus-dash\dash\bin\OculusDash.exe"
 
 function Show-Notification($msg, $success=$true) {
     $icon = if ($success) { "Information" } else { "Error" }
@@ -49,3 +49,4 @@ $watcher.EnableRaisingEvents = $true
 while ($true) {
     Start-Sleep -Seconds 60
 }
+
