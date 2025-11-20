@@ -13,28 +13,28 @@ function Restore-Dash {
         $hashOriginal = (Get-FileHash $original).Hash
         $hashTarget   = (Get-FileHash $target).Hash
 
-        # Se i due file sono diversi → Meta lo ha sovrascritto
         if ($hashOriginal -ne $hashTarget) {
 
-            # Prova a ripristinare
+            Stop-Service OVRService -Force
+
             Copy-Item $original $target -Force
 
-            # Verifica di nuovo l'hash
-            $hashAfterCopy = (Get-FileHash $target).Hash
+            $hashAfter = (Get-FileHash $target).Hash
 
-            if ($hashAfterCopy -eq $hashOriginal) {
+            Start-Service OVRService
+
+            if ($hashAfter -eq $hashOriginal) {
                 Show-Notification "OculusDash.exe è stato ripristinato correttamente."
             } else {
-                Show-Notification "ATTENZIONE: il ripristino NON è riuscito. Potrebbe essere in uso o bloccato." $false
+                Show-Notification "Il ripristino NON è riuscito dopo lo stop del servizio." $false
             }
         }
     }
     catch {
-        Show-Notification "Errore durante il tentativo di ripristino: $($_.Exception.Message)" $false
+        Show-Notification "Errore durante il ripristino: $($_.Exception.Message)" $false
     }
 }
 
-# Imposta watcher
 $folder = Split-Path $target
 $watcher = New-Object System.IO.FileSystemWatcher
 $watcher.Path = $folder
@@ -45,8 +45,8 @@ Register-ObjectEvent $watcher Changed -Action { Restore-Dash }
 
 $watcher.EnableRaisingEvents = $true
 
-# Mantiene vivo lo script
 while ($true) {
     Start-Sleep -Seconds 60
 }
+
 
