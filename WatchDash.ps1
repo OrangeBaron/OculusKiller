@@ -26,7 +26,7 @@ function Restore-Dash {
             if ($hashAfter -eq $hashOriginal) {
                 Show-Notification "OculusDash.exe è stato ripristinato correttamente."
             } else {
-                Show-Notification "Il ripristino NON è riuscito dopo lo stop del servizio." $false
+                Show-Notification "Il ripristino di OculusDash.exe NON è riuscito." $false
             }
         }
     }
@@ -48,5 +48,3 @@ $watcher.EnableRaisingEvents = $true
 while ($true) {
     Start-Sleep -Seconds 60
 }
-
-
