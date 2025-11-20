@@ -1,4 +1,4 @@
-**Watcher per ripristinare [OculusKiller](https://github.com/OrangeBaron/OculusKiller) dopo un aggiornamento di Meta**
+**Watcher per ripristinare [OculusKiller](https://github.com/BnuuySolutions/OculusKiller) dopo un aggiornamento di Meta**
 
 ## Installazione:
 1. [Scarica](https://github.com/OrangeBaron/OculusKiller/archive/refs/heads/main.zip) e decomprimi la cartella, rinominala come `OculusKiller` e mettila in C:\
