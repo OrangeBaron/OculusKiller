@@ -5,6 +5,6 @@
 3. Apri l'utilità di pianificazione di Windows > importa attività > seleziona OculusDashWatcher.xml > salva
 4. Riavvia
 ## Disinstallazione:
-* Rimuovi il task "OculusDashWatcher" dalla libreria della pianificazione attività di Windows
+* Rimuovi il task OculusDashWatcher dalla libreria della pianificazione attività di Windows
 * Oppure esegui `Unregister-ScheduledTask -TaskName "OculusDashWatcher" -Confirm:$false` da PowerShell come amministratore
 * Oppure esegui `schtasks /delete /tn "OculusDashWatcher" /f` da CMD come amministratore
