@@ -1,3 +1,5 @@
+**Watcher per ripristinare [OculusKiller](https://github.com/OrangeBaron/OculusKiller) dopo un aggiornamento di Meta**
+
 ## Installazione:
 1. [Scarica](https://github.com/OrangeBaron/OculusKiller/archive/refs/heads/main.zip) e decomprimi la cartella, rinominala come `OculusKiller` e mettila in C:\
 2. Aggiungi [OculusDash.exe](https://github.com/BnuuySolutions/OculusKiller/releases/download/v1.3.0/OculusDash.exe) alla cartella
