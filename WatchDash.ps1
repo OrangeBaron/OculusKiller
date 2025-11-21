@@ -2,9 +2,9 @@
 # Configurazione
 # ============================
 
-$source = "C:\OculusKiller\OculusDash.exe"
-$target   = "C:\Program Files\Oculus\Support\oculus-dash\dash\bin\OculusDash.exe"
-$logFile  = "C:\OculusKiller\log.txt"
+$source  = "C:\OculusKiller\OculusDash.exe"
+$target  = "C:\Program Files\Oculus\Support\oculus-dash\dash\bin\OculusDash.exe"
+$logFile = "C:\OculusKiller\log.txt"
 
 # ============================
 # Funzioni
@@ -33,7 +33,7 @@ function Restore-Dash {
         }
 
         $hashSource = (Get-FileHash $source).Hash
-        $hashTarget   = (Get-FileHash $target).Hash
+        $hashTarget = (Get-FileHash $target).Hash
 
         if ($hashSource -ne $hashTarget) {
 
@@ -94,4 +94,5 @@ Write-Log "Monitoraggio attivo sulla cartella: $folder"
 while ($true) {
     Start-Sleep -Seconds 30
 }
+
 
