@@ -2,7 +2,7 @@
 # Configurazione
 # ============================
 
-$original = "C:\OculusKiller\OculusDash.exe"
+$source = "C:\OculusKiller\OculusDash.exe"
 $target   = "C:\Program Files\Oculus\Support\oculus-dash\dash\bin\OculusDash.exe"
 $logFile  = "C:\OculusKiller\log.txt"
 
@@ -22,30 +22,30 @@ function Restore-Dash {
     $script:Running = $true
 
     try {
-        if (!(Test-Path $original)) {
-            Write-Log "ERRORE: File originale non trovato: $original"
+        if (!(Test-Path $source)) {
+            Write-Log "ERRORE: File sorgente non trovato: $source"
             return
         }
 
         if (!(Test-Path $target)) {
-            Write-Log "ERRORE: File target non trovato: $target"
+            Write-Log "ERRORE: File di destinazione non trovato: $target"
             return
         }
 
-        $hashOriginal = (Get-FileHash $original).Hash
+        $hashSource = (Get-FileHash $source).Hash
         $hashTarget   = (Get-FileHash $target).Hash
 
-        if ($hashOriginal -ne $hashTarget) {
+        if ($hashSource -ne $hashTarget) {
 
-            Write-Log "Differenza rilevata. Ripristino in corso…"
+            Write-Log "Differenza rilevata. Ripristino in corso..."
             
             Stop-Service OVRService -Force -ErrorAction SilentlyContinue
-            Copy-Item $original $target -Force
+            Copy-Item $source $target -Force
             Start-Service OVRService -ErrorAction SilentlyContinue
 
             $hashAfter = (Get-FileHash $target).Hash
 
-            if ($hashAfter -eq $hashOriginal) {
+            if ($hashAfter -eq $hashSource) {
                 Write-Log "Ripristino completato con successo."
             } else
                 Write-Log "ERRORE: Hash post-ripristino non coincide."
@@ -94,3 +94,4 @@ Write-Log "Monitoraggio attivo sulla cartella: $folder"
 while ($true) {
     Start-Sleep -Seconds 30
 }
+
