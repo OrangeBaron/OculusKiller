@@ -1,24 +1,21 @@
 <?xml version="1.0" encoding="UTF-16"?>
 <Task version="1.4" xmlns="http://schemas.microsoft.com/windows/2004/02/mit/task">
   <RegistrationInfo>
-    <Date>2025-11-20T12:00:00</Date>
+    <Date>2025-01-01T12:00:00</Date>
     <Author>OculusKiller</Author>
-    <Description>Event-based watcher per ripristinare OculusDash.exe patchato.</Description>
+    <Description>Watcher per ripristinare automaticamente OculusKiller</Description>
   </RegistrationInfo>
-
   <Triggers>
     <BootTrigger>
       <Enabled>true</Enabled>
     </BootTrigger>
   </Triggers>
-
   <Principals>
     <Principal id="Author">
-      <UserId>S-1-5-18</UserId> <!-- SYSTEM -->
+      <UserId>S-1-5-18</UserId>
       <RunLevel>HighestAvailable</RunLevel>
     </Principal>
   </Principals>
-
   <Settings>
     <MultipleInstancesPolicy>IgnoreNew</MultipleInstancesPolicy>
     <DisallowStartIfOnBatteries>false</DisallowStartIfOnBatteries>
@@ -26,29 +23,22 @@
     <AllowHardTerminate>true</AllowHardTerminate>
     <StartWhenAvailable>true</StartWhenAvailable>
     <RunOnlyIfNetworkAvailable>false</RunOnlyIfNetworkAvailable>
-
     <IdleSettings>
       <StopOnIdleEnd>false</StopOnIdleEnd>
       <RestartOnIdle>false</RestartOnIdle>
     </IdleSettings>
-
     <AllowStartOnDemand>true</AllowStartOnDemand>
     <Enabled>true</Enabled>
-    <Hidden>true</Hidden>
+    <Hidden>false</Hidden>
     <RunOnlyIfIdle>false</RunOnlyIfIdle>
     <WakeToRun>false</WakeToRun>
-
-    <!-- Nessun timeout (run forever) -->
     <ExecutionTimeLimit>PT0S</ExecutionTimeLimit>
-
-    <!-- Priorità bassa di sistema (7 = background) -->
     <Priority>7</Priority>
   </Settings>
-
   <Actions Context="Author">
     <Exec>
       <Command>powershell.exe</Command>
-      <Arguments>-NoProfile -NonInteractive -WindowStyle Hidden -ExecutionPolicy Bypass -File "C:\OculusKiller\WatchDash.ps1"</Arguments>
+      <Arguments>-ExecutionPolicy Bypass -File "C:\OculusKiller\WatchDash.ps1"</Arguments>
     </Exec>
   </Actions>
 </Task>
