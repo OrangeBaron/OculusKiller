@@ -1,98 +1,64 @@
-# ============================
-# Configurazione
-# ============================
+# ===========================
+# OculusKiller Auto-Restore Watcher
+# ===========================
 
-$source  = "C:\OculusKiller\OculusDash.exe"
-$target  = "C:\Program Files\Oculus\Support\oculus-dash\dash\bin\OculusDash.exe"
-$logFile = "C:\OculusKiller\log.txt"
-
-# ============================
-# Funzioni
-# ============================
+$LogFile = "C:\OculusKiller\log.txt"
+$SourceFile = "C:\OculusKiller\OculusDash.exe"
+$TargetFile = "C:\Program Files\Oculus\Support\oculus-dash\dash\bin\OculusDash.exe"
 
 function Write-Log {
     param([string]$msg)
     $timestamp = (Get-Date).ToString("yyyy-MM-dd HH:mm:ss")
-    "$timestamp - $msg" | Out-File -FilePath $logFile -Append -Encoding UTF8
+    Add-Content -Path $LogFile -Value "$timestamp - $msg"
 }
 
-function Restore-Dash {
-    # Debounce: evita chiamate multiple contemporanee
-    if ($script:Running) { return }
-    $script:Running = $true
+function Restore-OculusKiller {
+    Write-Log "Modifica rilevata — avvio procedura di ripristino"
 
-    try {
-        if (!(Test-Path $source)) {
-            Write-Log "ERRORE: File sorgente non trovato: $source"
-            return
-        }
+    Write-Log "Arresto OVRService..."
+    Stop-Service -Name "OVRService" -Force -ErrorAction SilentlyContinue
 
-        if (!(Test-Path $target)) {
-            Write-Log "ERRORE: File di destinazione non trovato: $target"
-            return
-        }
+    Write-Log "Copia del file OculusKiller..."
+    Copy-Item -Path $SourceFile -Destination $TargetFile -Force
 
-        $hashSource = (Get-FileHash $source).Hash
-        $hashTarget = (Get-FileHash $target).Hash
+    Write-Log "Riavvio OVRService..."
+    Start-Service -Name "OVRService"
 
-        if ($hashSource -ne $hashTarget) {
+    Write-Log "Ripristino completato!"
+}
 
-            Write-Log "Differenza rilevata. Ripristino in corso..."
-            
-            Stop-Service OVRService -Force -ErrorAction SilentlyContinue
-            Copy-Item $source $target -Force
-            Start-Service OVRService -ErrorAction SilentlyContinue
+# ===========================
+# Controllo iniziale
+# ===========================
 
-            $hashAfter = (Get-FileHash $target).Hash
+if (-Not (Test-Path $LogFile)) { New-Item -ItemType File -Path $LogFile | Out-Null }
 
-            if ($hashAfter -eq $hashSource) {
-                Write-Log "Ripristino completato con successo."
-            } else
-                Write-Log "ERRORE: Hash post-ripristino non coincide."
-            }
-        } else {
-            Write-Log "Nessuna modifica rilevata."
-        }
-
-    } catch {
-        Write-Log "ERRORE durante il ripristino: $($_.Exception.Message)"
+if (Test-Path $TargetFile) {
+    if ((Get-FileHash $SourceFile).Hash -ne (Get-FileHash $TargetFile).Hash) {
+        Restore-OculusKiller
+    } else {
+        Write-Log "Allineamento corretto all'avvio — nessuna azione necessaria"
     }
-    finally {
-        $script:Running = $false
-    }
+} else {
+    Write-Log "File target mancante — ripristino immediato"
+    Restore-OculusKiller
 }
 
-# ============================
-# Avvio iniziale
-# ============================
+# ===========================
+# Watcher su modifiche future
+# ===========================
 
-Write-Log "===== Avvio script OculusKiller ====="
-Restore-Dash
+$Watcher = New-Object System.IO.FileSystemWatcher
+$Watcher.Path = Split-Path $TargetFile
+$Watcher.Filter = "OculusDash.exe"
+$Watcher.NotifyFilter = [System.IO.NotifyFilters]'LastWrite, Size'
 
-# ============================
-# FileSystemWatcher
-# ============================
-
-$folder = Split-Path $target
-$watcher = New-Object System.IO.FileSystemWatcher
-$watcher.Path = $folder
-$watcher.Filter = "OculusDash.exe"
-$watcher.NotifyFilter = [System.IO.NotifyFilters]'LastWrite, Size'
-
-Register-ObjectEvent $watcher Changed -Action {
-    Write-Log "Evento file modificato rilevato."
-    Restore-Dash
+Register-ObjectEvent $Watcher Changed -Action {
+    Start-Sleep -Milliseconds 500  # attende fine scrittura del file
+    Restore-OculusKiller
 }
 
-$watcher.EnableRaisingEvents = $true
-Write-Log "Monitoraggio attivo sulla cartella: $folder"
-
-# ============================
-# Loop (mantiene attivo il watcher)
-# ============================
-
+Write-Log "Watcher avviato e in ascolto..."
 while ($true) {
-    Start-Sleep -Seconds 30
+    Start-Sleep -Seconds 2
 }
-
-
